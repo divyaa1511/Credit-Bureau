@@ -1,0 +1,274 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer Questions</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* Navbar Styling */
+        .navbar {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #0056b3;
+            border-radius: 5px;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        /* Navbar Styling */
+        nav {
+            background-color: #333;
+            padding: 10px 20px;
+        }
+
+        nav .logo {
+            color: white;
+            font-size: 1.8em;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        nav ul li a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+
+        /* Container for all content */
+        .container {
+            margin-top: 80px; /* Space for fixed navbar */
+            background-color: white;
+            padding: 30px 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            max-width: 800px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            margin-left: 20%;
+        }
+
+        /* Heading */
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Question container */
+        .question-container {
+            margin-bottom: 20px;
+            
+        }
+
+        /* Individual question card styling */
+        .question-card {
+            padding: 15px;
+            background-color: #fff;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Label and Radio Button */
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Navigation Buttons */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .navigation-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navigation-btn:hover {
+            background-color: #45a049;
+        }
+
+        #prev-btn {
+            background-color: #f44336;
+        }
+
+        #prev-btn:hover {
+            background-color: #e53935;
+        }
+
+        #submit-btn {
+            background-color: #2196F3;
+        }
+
+        #submit-btn:hover {
+            background-color: #1976D2;
+        }
+
+        /* Footer or Additional Styling */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+       <!-- Navbar -->
+       <div class="navbar">
+        <a href="{% url 'question_form' %}">Home</a>
+        <a href="{% url 'results' %}">Results</a>
+
+        {% if user.is_authenticated %}
+            <span>Hi, {{ user.username }}</span>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h2>Answer the following questions:</h2>
+        <form method="POST" id="question-form">
+            {% csrf_token %}
+            <div class="question-container" id="question-container">
+                {% for question in questions %}
+                    <div class="question-card" id="question-{{ question.id }}" style="display:none;">
+                        <p>{{ question.text }}</p>
+                        <br>
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="A" required> {{ question.answer_a }}
+                        </label>
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="B"> {{ question.answer_b }}
+                        </label>
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="C"> {{ question.answer_c }}
+                        </label>
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="D"> {{ question.answer_d }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="navigation-buttons">
+                <button type="button" id="prev-btn" class="navigation-btn" onclick="prevQuestion()">Previous</button>
+                <button type="button" id="next-btn" class="navigation-btn" onclick="nextQuestion()">Next</button>
+                <button type="submit" id="submit-btn" class="navigation-btn" style="display:none;">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 Quiz App | <a href="#">Privacy Policy</a> | <a href="#">Terms & Conditions</a></p>
+    </footer>
+
+    <script>
+        let currentQuestionIndex = 0;
+        const questions = document.querySelectorAll('.question-card');
+        const submitBtn = document.getElementById('submit-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+
+        function showQuestion(index) {
+            // Hide all questions
+            questions.forEach((question, i) => {
+                question.style.display = i === index ? 'block' : 'none';
+            });
+            // Handle navigation button visibility
+            prevBtn.style.display = index === 0 ? 'none' : 'inline-block';
+            nextBtn.style.display = index === questions.length - 1 ? 'none' : 'inline-block';
+            submitBtn.style.display = index === questions.length - 1 ? 'inline-block' : 'none';
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Initial question display
+        showQuestion(currentQuestionIndex);
+    </script>
+</body>
+</html>
