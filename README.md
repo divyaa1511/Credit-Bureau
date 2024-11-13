@@ -12,15 +12,23 @@ Django: Latest stable version
 
 # How to Set Up and Run the Project
 
-Step 1: Clone the Repository
+## Step 1: Clone the Repository
+
 git clone https://github.com/divyaa1511/Credit-Bureau.git
 
-Step 2: Set Up the Database
+## Step 2: Set Up the Database
+
 python manage.py makemigrations
+
 python manage.py migrate
 
-Step 3: Run the Development Server
+## Step 3: Run the Development Server
+
 python manage.py runserver
 
-Home page: http://127.0.0.1:8000/accounts/register
-Admin panel : http://127.0.0.1:8000/admin/
+## Home page: 
+
+http://127.0.0.1:8000/accounts/register
+
+## Admin panel:
+http://127.0.0.1:8000/admin/
